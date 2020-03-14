@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityIndicator } from 'react-native';
 
 import api from '../../services/api';
 
@@ -16,6 +15,9 @@ import {
   Info,
   Title,
   Author,
+  OwnerAvatarLoad,
+  TitleLoad,
+  AuthorLoad,
 } from './styles';
 
 export default class User extends Component {
@@ -32,7 +34,7 @@ export default class User extends Component {
 
   state = {
     stars: [],
-    loading: true,
+    loading: false,
     page: 1,
     refreshing: false,
   };
@@ -53,7 +55,6 @@ export default class User extends Component {
     this.setState({
       stars: page >= 2 ? [...stars, ...response.data] : response.data,
       page,
-      loading: false,
       refreshing: false,
     });
   };
@@ -90,27 +91,38 @@ export default class User extends Component {
           <Bio>{user.bio}</Bio>
         </Header>
 
-        {loading ? (
-          <ActivityIndicator color="#7159c1" />
-        ) : (
-          <Stars
-            data={stars}
-            onRefresh={this.refreshList}
-            refreshing={refreshing}
-            onEndReachedThreshold={0.2}
-            onEndReached={this.loadMore}
-            keyExtractor={star => String(star.id)}
-            renderItem={({ item }) => (
-              <Starred onPress={() => this.handleNavigate(item)}>
-                <OwnerAvatar source={{ uri: item.owner.avatar_url }} />
-                <Info>
-                  <Title>{item.name}</Title>
-                  <Author>{item.owner.login}</Author>
-                </Info>
-              </Starred>
-            )}
-          />
-        )}
+        <Stars
+          data={stars}
+          onRefresh={this.refreshList}
+          refreshing={refreshing}
+          onEndReachedThreshold={0.2}
+          onEndReached={this.loadMore}
+          keyExtractor={star => String(star.id)}
+          renderItem={({ item }) => (
+            <Starred onPress={() => this.handleNavigate(item)}>
+              <OwnerAvatarLoad autoRun visible={loading}>
+                <OwnerAvatar
+                  source={{ uri: item.owner.avatar_url }}
+                  onLoad={() => this.setState({ loading: true })}
+                />
+              </OwnerAvatarLoad>
+
+              <Info>
+                <TitleLoad autoRun visible={loading}>
+                  <Title onLoad={() => this.setState({ loading: true })}>
+                    {item.name}
+                  </Title>
+                </TitleLoad>
+
+                <AuthorLoad autoRun visible={loading}>
+                  <Author onLoad={() => this.setState({ loading: true })}>
+                    {item.owner.login}
+                  </Author>
+                </AuthorLoad>
+              </Info>
+            </Starred>
+          )}
+        />
       </Container>
     );
   }
