@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 
 import { Keyboard, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
-
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import api from '../../services/api';
@@ -25,7 +24,7 @@ import {
 export default class Main extends Component {
   static navigationOptions = { title: 'Usuários' };
 
-  static PropTypes = {
+  static propTypes = {
     navigation: PropTypes.shape({
       navigate: PropTypes.func,
     }).isRequired,
@@ -110,13 +109,10 @@ export default class Main extends Component {
           data={users}
           keyExtractor={user => user.login}
           renderItem={({ item }) => (
-            <User>
+            <User onPress={() => this.handleNavigate(item)}>
               <Avatar source={{ uri: item.avatar }} />
               <Name>{item.name}</Name>
               <Bio>{item.bio}</Bio>
-              <ProfileButton onPress={() => this.handleNavigate(item)}>
-                <ProfileButtonText>Ver perfil</ProfileButtonText>
-              </ProfileButton>
             </User>
           )}
         />
