@@ -81,9 +81,16 @@ export default class Main extends Component {
     navigation.navigate('User', { user });
   };
 
-  renderRightItems = () => {
+  handleDelete = user => {
+    const { users } = this.state;
+    const gitUser = users.filter(u => u !== user);
+
+    this.setState({ users: [...gitUser] });
+  };
+
+  renderRightItems = item => {
     return (
-      <DeleteButton>
+      <DeleteButton onPress={() => this.handleDelete(item)}>
         <Icon name="delete-forever" size={50} color="#FFF" />
       </DeleteButton>
     );
@@ -117,9 +124,7 @@ export default class Main extends Component {
           data={users}
           keyExtractor={user => user.login}
           renderItem={({ item }) => (
-            <Swipeable
-              renderRightActions={this.renderRightItems}
-            >
+            <Swipeable renderRightActions={() => this.renderRightItems(item)}>
               <User onPress={() => this.handleNavigate(item)}>
                 <Avatar source={{ uri: item.avatar }} />
                 <Name>{item.name}</Name>
