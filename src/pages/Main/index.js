@@ -34,6 +34,7 @@ export default class Main extends Component {
     newUser: '',
     users: [],
     loading: false,
+    err: null,
   };
 
   async componentDidMount() {
@@ -53,26 +54,41 @@ export default class Main extends Component {
   }
 
   handleAddUser = async () => {
-    const { users, newUser } = this.state;
+    try {
+      const { users, newUser } = this.state;
 
-    this.setState({ loading: true });
+      this.setState({ loading: true });
 
-    const response = await api.get(`/users/${newUser}`);
+      if (newUser === '') throw new Error('Informe o repositório!');
 
-    const data = {
-      name: response.data.name,
-      login: response.data.login,
-      bio: response.data.bio,
-      avatar: response.data.avatar_url,
-    };
+      const checkUser = users.find(
+        r => r.login.toUpperCase() === newUser.toUpperCase()
+      );
 
-    this.setState({
-      users: [...users, data],
-      newUser: '',
-      loading: false,
-    });
+      if (checkUser) throw new Error('Repositório duplicado');
 
-    Keyboard.dismiss();
+      const response = await api.get(`/users/${newUser}`);
+
+      const data = {
+        name: response.data.name,
+        login: response.data.login,
+        bio: response.data.bio,
+        avatar: response.data.avatar_url,
+      };
+
+      this.setState({
+        users: [...users, data],
+        newUser: '',
+        loading: false,
+        err: false,
+      });
+
+      Keyboard.dismiss();
+    } catch (error) {
+      this.setState({ err: true });
+    } finally {
+      this.setState({ loading: false });
+    }
   };
 
   handleNavigate = user => {
@@ -97,12 +113,13 @@ export default class Main extends Component {
   };
 
   render() {
-    const { users, newUser, loading } = this.state;
+    const { users, newUser, loading, err } = this.state;
 
     return (
       <Container>
         <Form>
           <Input
+            error={err}
             autoCorrect={false}
             autoCaptalize="none"
             placeholder="Adicionar usuário"
