@@ -71,3 +71,14 @@ export const Bio = styled.Text.attrs({
   margin-top: 5px;
   text-align: center;
 `;
+
+export const DeleteButton = styled(RectButton)`
+  margin: 0 20px 30px;
+  padding: 10px;
+  border-radius: 4px;
+  background: #dd2c00;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  opacity: ${props => (props.loading ? 0.7 : 1)};
+`;
