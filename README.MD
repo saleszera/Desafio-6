@@ -19,3 +19,7 @@
 <p>
   O projeto pode ser iniciado utilizando o seguinte comando: yarn react-native run-android
 </p>
+<br>
+<p>
+  Lembrando que é obrigatório ter o NodeJs e Yarn instalados além de um emulador do android ou de um celular devidamente configurado para fazer os testes.
+</p>
