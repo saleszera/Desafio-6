@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import Swipeable from 'react-native-gesture-handler/Swipeable';
 
 import { Keyboard, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -17,8 +18,7 @@ import {
   Avatar,
   Name,
   Bio,
-  ProfileButton,
-  ProfileButtonText,
+  DeleteButton,
 } from './styles';
 
 export default class Main extends Component {
@@ -81,6 +81,14 @@ export default class Main extends Component {
     navigation.navigate('User', { user });
   };
 
+  renderRightItems = () => {
+    return (
+      <DeleteButton>
+        <Icon name="delete-forever" size={50} color="#FFF" />
+      </DeleteButton>
+    );
+  };
+
   render() {
     const { users, newUser, loading } = this.state;
 
@@ -109,11 +117,15 @@ export default class Main extends Component {
           data={users}
           keyExtractor={user => user.login}
           renderItem={({ item }) => (
-            <User onPress={() => this.handleNavigate(item)}>
-              <Avatar source={{ uri: item.avatar }} />
-              <Name>{item.name}</Name>
-              <Bio>{item.bio}</Bio>
-            </User>
+            <Swipeable
+              renderRightActions={this.renderRightItems}
+            >
+              <User onPress={() => this.handleNavigate(item)}>
+                <Avatar source={{ uri: item.avatar }} />
+                <Name>{item.name}</Name>
+                <Bio>{item.bio}</Bio>
+              </User>
+            </Swipeable>
           )}
         />
       </Container>
